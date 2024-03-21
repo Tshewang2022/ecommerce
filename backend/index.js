@@ -52,6 +52,18 @@ app.get("/books", async (request, response) => {
   }
 });
 
+// === creating the routes to get one books from the databases ===
+app.get("/books/:id/", async (request, response) => {
+  try {
+    const { id } = request.params;
+    const book = await Book.findById(id);
+    return response.status(200).json(book);
+  } catch (error) {
+    console.log(error);
+    response.status(500).send({ message: error.message });
+  }
+});
+
 // === routes for the updating the database ===
 app.put("/books/:id/", async (request, response) => {
   try {
@@ -77,17 +89,6 @@ app.put("/books/:id/", async (request, response) => {
   }
 });
 
-// === creating the routes to get one books from the databases ===
-app.get("/books/:id/", async (request, response) => {
-  try {
-    const { id } = request.params;
-    const book = await Book.findById(id);
-    return response.status(200).json(book);
-  } catch (error) {
-    console.log(error);
-    response.status(500).send({ message: error.message });
-  }
-});
 // === connecting with the mongoose ===
 mongoose
   .connect(mongoDBURL)
