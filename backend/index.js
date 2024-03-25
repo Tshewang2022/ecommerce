@@ -53,7 +53,7 @@ app.get("/books", async (request, response) => {
 });
 
 // === creating the routes to get one books from the databases ===
-app.get("/books/:id/", async (request, response) => {
+app.get("/books/:id", async (request, response) => {
   try {
     const { id } = request.params;
     const book = await Book.findById(id);
@@ -65,7 +65,7 @@ app.get("/books/:id/", async (request, response) => {
 });
 
 // === routes for the updating the database ===
-app.put("/books/:id/", async (request, response) => {
+app.put("/books/:id", async (request, response) => {
   try {
     if (
       !request.body.title ||
@@ -79,13 +79,29 @@ app.put("/books/:id/", async (request, response) => {
     const { id } = request.params;
     const result = await Book.findByIdAndUpdate(id, request.body);
     if (!result) {
-      return response
-        .status(404)
-        .json({ message: "Book Updated successfully" });
+      return response.status(404).json({ message: "Book not found" });
     }
+    return response.status(200).send({ message: "Book updated successfully" });
   } catch (error) {
     console.log(error);
     response.status(500).send(error);
+    response.status(500).send({ message: error.message });
+  }
+});
+
+// === route for deleting the book fromm the database ===
+app.delete("/books/:id", async (request, response) => {
+  try {
+    const { id } = request.params;
+    const result = await Book.findByIdAndDelete(id);
+    if (!result) {
+      return response.status(404).json({ message: "book not found" });
+    }
+    return response
+      .status(200)
+      .send({ message: "Book is deleted successfully" });
+  } catch (error) {
+    console.log(error.message);
   }
 });
 
